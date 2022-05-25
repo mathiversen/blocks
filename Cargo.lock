@@ -49,6 +49,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "dominator-template"
+version = "0.1.0"
+dependencies = [
+ "console_error_panic_hook",
+ "dominator",
+ "futures-signals",
+ "once_cell",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+]
+
+[[package]]
 name = "futures-channel"
 version = "0.3.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -292,17 +305,4 @@ checksum = "7b17e741662c70c8bd24ac5c5b18de314a2c26c32bf8346ee1e6f53de919c283"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
-]
-
-[[package]]
-name = "wesh"
-version = "0.1.0"
-dependencies = [
- "console_error_panic_hook",
- "dominator",
- "futures-signals",
- "once_cell",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
 ]

@@ -1,6 +1,9 @@
-use wasm_bindgen::prelude::*;
 mod app;
-use app::App;
+mod components;
+mod traits;
+
+use crate::app::App;
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen(start)]
 pub async fn main() -> Result<(), JsValue> {
