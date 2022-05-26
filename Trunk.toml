@@ -12,6 +12,7 @@ watch = ["src/", "static/"]
 ignore = []
 
 [serve]
+address = "0.0.0.0"
 port = 1337
 open = true
 

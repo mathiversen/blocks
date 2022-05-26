@@ -8,6 +8,12 @@ use crate::traits::Component;
 #[derive(Debug)]
 pub struct Title(pub Mutable<String>);
 
+impl Default for Title {
+    fn default() -> Self {
+        Self(Mutable::new("Page title".into()))
+    }
+}
+
 impl Component for Title {
     fn render(c: Arc<Self>) -> Dom {
         static STYLES: Lazy<String> = Lazy::new(|| {
@@ -20,11 +26,5 @@ impl Component for Title {
             .class(&*STYLES)
             .text_signal(c.0.signal_cloned())
         })
-    }
-}
-
-impl Default for Title {
-    fn default() -> Self {
-        Self(Mutable::new("Page title".into()))
     }
 }

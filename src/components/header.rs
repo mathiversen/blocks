@@ -13,6 +13,19 @@ pub struct Header {
     pub links: MutableVec<Arc<Link>>,
 }
 
+impl Default for Header {
+    fn default() -> Self {
+        Self {
+            title: Arc::new(Title::default()),
+            links: MutableVec::new_with_values(
+                (0..5)
+                    .map(|_| Arc::new(Link::default()))
+                    .collect::<Vec<_>>(),
+            ),
+        }
+    }
+}
+
 impl Component for Header {
     fn render(c: Arc<Self>) -> Dom {
         static HEADER_STYLES: Lazy<String> = Lazy::new(|| {
@@ -49,18 +62,5 @@ impl Component for Header {
                 }))
             }))
         })
-    }
-}
-
-impl Default for Header {
-    fn default() -> Self {
-        Self {
-            title: Arc::new(Title::default()),
-            links: MutableVec::new_with_values(
-                (0..5)
-                    .map(|_| Arc::new(Link::default()))
-                    .collect::<Vec<_>>(),
-            ),
-        }
     }
 }
