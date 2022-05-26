@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use crate::{
     components::icon::Icon,
-    helpers::{url, url_signal_to_str},
+    helpers::{url, url_signal_string},
     traits::Component,
 };
 use dominator::{class, html, Dom};
@@ -40,7 +40,7 @@ impl Component for Link {
 
         html!("a", {
             .class(&*A_STYLES)
-            .attr_signal("href", url_signal_to_str(c.href.clone()))
+            .attr_signal("href", url_signal_string(c.href.clone()))
             .child(Icon::render(c.icon.clone()))
             .child(html!("small", {
                 .text_signal(c.text.signal_cloned())

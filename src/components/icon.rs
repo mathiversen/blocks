@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use crate::{
-    helpers::{url, url_signal_to_str},
+    helpers::{url, url_signal_string_svg},
     traits::Component,
 };
 use dominator::{class, svg, Dom};
@@ -40,7 +40,7 @@ impl Component for Icon {
             .attr("xmlns", "http://www.w3.org/2000/svg")
             .class(&*STYLES)
             .child(svg!("use", {
-                .attr_signal("href", url_signal_to_str(c.href.clone()))
+                .attr_signal("href", url_signal_string_svg(c.href.clone()))
             }))
         })
     }

@@ -3,6 +3,7 @@ use crate::{
     traits::Component,
 };
 use dominator::{class, html, Dom};
+use futures_signals::signal::{Mutable, SignalExt};
 use once_cell::sync::Lazy;
 use std::sync::Arc;
 
@@ -10,6 +11,7 @@ use std::sync::Arc;
 pub struct App {
     pub banner: Arc<Banner>,
     pub header: Arc<Header>,
+    pub footer: Arc<Mutable<Option<String>>>,
 }
 
 impl App {
@@ -18,6 +20,7 @@ impl App {
             Self {
                 banner: Arc::new(Banner::default()),
                 header: Arc::new(Header::default()),
+                footer: Arc::new(Mutable::new(Some("Iversen © 2022".into()))),
             }
         })
     }
@@ -31,15 +34,53 @@ impl App {
             }
         });
 
+        static MAIN_STYLES: Lazy<String> = Lazy::new(|| {
+            class! {
+                .style("display", "grid")
+                .style("block-size", "100%")
+                .style("grid-auto-flow", "column")
+                .style("grid-auto-columns", "100%")
+                .style("overflow", "auto hidden")
+                .style("background", "var(--color-white)")
+                .style("scroll-snap-type", "x mandatory")
+            }
+        });
+
+        static SECTION_STYLES: Lazy<String> = Lazy::new(|| {
+            class! {
+                .style("overflow-y", "auto")
+                // .style("scroll-snap-type", "y proximity")
+                .style("scroll-padding", "1rem")
+                .style("scroll-snap-align", "start")
+            }
+        });
+
         html!("app-root", {
             .class(&*ROOT_STYLES)
+            .style_signal("grid-template-rows", app.banner.clone().visible.signal_ref(|bool| {
+                if *bool {
+                    "auto auto 1fr auto"
+                } else {
+                    "auto 1fr auto"
+                }
+            }))
             .child(Banner::render(app.banner.clone()))
             .child(Header::render(app.header.clone()))
             .child(html!("main", {
-                .text("hello world")
+                .class(&*MAIN_STYLES)
+                .children((1..=5).map(|x| {
+                    html!("section", {
+                        .class(&*SECTION_STYLES)
+                        .text(&format!("section {}", &x))
+                    })
+                }))
             }))
             .child(html!("footer", {
-                .text("footer")
+                .visible_signal(app.footer.signal_ref(|x| x.is_some()).dedupe())
+                .style("text-align", "center")
+                .child(html!("small", {
+                    .text_signal(app.footer.signal_ref(|x| x.clone().unwrap()))
+                }))
             }))
             // .child(html!("input" => HtmlInputElement, {
             //     .prop_signal("value", app.header.title.0.signal_cloned())
