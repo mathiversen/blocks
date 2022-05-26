@@ -62,6 +62,7 @@ dependencies = [
  "console_error_panic_hook",
  "dominator",
  "futures-signals",
+ "js-sys",
  "once_cell",
  "wasm-bindgen",
  "wasm-bindgen-futures",

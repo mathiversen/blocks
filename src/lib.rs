@@ -1,5 +1,6 @@
 mod app;
 pub mod components;
+pub mod helpers;
 mod traits;
 
 use crate::app::App;

@@ -1,23 +1,28 @@
 use std::sync::Arc;
 
-use crate::traits::Component;
-use dominator::{class, html, svg, Dom};
+use crate::{
+    components::icon::Icon,
+    helpers::{url, url_signal_to_str},
+    traits::Component,
+};
+use dominator::{class, html, Dom};
 use futures_signals::signal::Mutable;
 use once_cell::sync::Lazy;
+use web_sys::Url;
 
 #[derive(Debug)]
 pub struct Link {
-    pub href: Mutable<String>, // TODO: Use url
+    pub href: Mutable<Url>,
     pub text: Mutable<String>,
-    pub icon_url: Mutable<String>,
+    pub icon: Arc<Icon>,
 }
 
 impl Default for Link {
     fn default() -> Self {
         Self {
-            href: Mutable::new("/".into()),
+            href: Mutable::new(url("/")),
             text: Mutable::new("Text".into()),
-            icon_url: Mutable::new("static/svg/icons.svg#activity".into()),
+            icon: Arc::new(Icon::new("box")),
         }
     }
 }
@@ -33,28 +38,10 @@ impl Component for Link {
             }
         });
 
-        static SVG_STYLES: Lazy<String> = Lazy::new(|| {
-            class! {
-                .style("width", "24px")
-                .style("height", "24px")
-                .style("stroke", "var(--color-black)")
-                .style("stroke-width", "2")
-                .style("stroke-linecap", "round")
-                .style("stroke-linejoin", "round")
-                .style("fill", "var(--color-transparent)")
-            }
-        });
-
         html!("a", {
             .class(&*A_STYLES)
-            .attr_signal("href", c.href.signal_cloned())
-            .child(svg!("svg", {
-                .attr("xmlns", "http://www.w3.org/2000/svg")
-                .class(&*SVG_STYLES)
-                .child(svg!("use", {
-                    .attr_signal("href", c.icon_url.signal_cloned())
-                }))
-            }))
+            .attr_signal("href", url_signal_to_str(c.href.clone()))
+            .child(Icon::render(c.icon.clone()))
             .child(html!("small", {
                 .text_signal(c.text.signal_cloned())
             }))
