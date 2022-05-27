@@ -57,13 +57,13 @@ impl App {
 
         html!("app-root", {
             .class(&*ROOT_STYLES)
-            // .style_signal("grid-template-rows", app.banner.clone().visible.signal_ref(|bool| {
-            //     if *bool {
-            //         "auto auto 1fr auto"
-            //     } else {
-            //         "auto 1fr auto"
-            //     }
-            // }))
+            .style_signal("grid-template-rows", app.banner.clone().visible.signal_ref(|bool| {
+                if *bool {
+                    "auto auto 1fr auto"
+                } else {
+                    "auto 1fr auto"
+                }
+            }))
             .child(Banner::render(app.banner.clone()))
             .child(Header::render(app.header.clone()))
             .child(html!("main", {
