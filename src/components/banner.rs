@@ -1,5 +1,5 @@
-use dominator::{class, clone, events, html, Dom};
-use futures_signals::signal::Mutable;
+use dominator::{class, clone, events, html, with_node, Dom};
+use futures_signals::signal::{Mutable, SignalExt};
 use once_cell::sync::Lazy;
 use std::sync::Arc;
 use web_sys::Url;
@@ -34,6 +34,8 @@ impl Component for Banner {
                 .style("position", "relative")
                 .style("padding", "1rem calc(2rem + 24px) 1rem 1rem")
                 .style("text-align", "center")
+                .style("transition", "margin-top 0.3s ease-out")
+                // .style("margin-top", "0px")
             }
         });
 
@@ -54,7 +56,15 @@ impl Component for Banner {
 
         html!("aside", {
             .class(&*STYLES)
-            .visible_signal(c.visible.signal_cloned())
+            .with_node!(element => {
+                .style_signal("margin-top", c.visible.signal_cloned().map(
+                    clone!(element => move |x| if x {
+                        "0px".to_string()
+                    } else {
+                        format!("-{}px", element.client_height())
+                    })
+                ))
+            })
             .child(html!("p", {
                 .text_signal(c.text.signal_cloned())
                 .child(html!("a", {
