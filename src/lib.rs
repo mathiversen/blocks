@@ -1,7 +1,8 @@
 mod app;
 pub mod components;
-pub mod helpers;
-mod traits;
+pub mod macros;
+pub mod traits;
+pub mod utils;
 
 use crate::app::App;
 use wasm_bindgen::prelude::*;

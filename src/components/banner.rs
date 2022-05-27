@@ -1,12 +1,21 @@
 use dominator::{class, clone, events, html, Dom};
-use futures_signals::signal::Mutable;
+use futures_signals::signal::{Mutable, SignalExt};
 use once_cell::sync::Lazy;
 use std::sync::Arc;
 use web_sys::Url;
 
-use crate::{helpers::url_signal_string, traits::Component};
+use crate::{
+    traits::{Component, SignalReturn},
+    utils::url_signal_string,
+};
 
 use super::icon::Icon;
+
+#[derive(Debug)]
+pub struct BannerArgs {
+    pub text: String,
+    pub href: Url,
+}
 
 #[derive(Debug)]
 pub struct Banner {
@@ -28,6 +37,20 @@ impl Default for Banner {
 }
 
 impl Component for Banner {
+    type Argument = BannerArgs;
+
+    fn new(args: Self::Argument) -> Self {
+        Self {
+            text: Mutable::new(args.text),
+            href: Mutable::new(args.href),
+            ..Default::default()
+        }
+    }
+
+    fn is_visible(&self) -> SignalReturn<bool> {
+        self.visible.signal().boxed()
+    }
+
     fn render(c: Arc<Self>) -> Dom {
         static STYLES: Lazy<String> = Lazy::new(|| {
             class! {
@@ -54,7 +77,8 @@ impl Component for Banner {
 
         html!("aside", {
             .class(&*STYLES)
-            .visible_signal(c.visible.signal_cloned())
+            .attr("data-name", c.name())
+            .visible_signal(c.is_visible())
             .child(html!("p", {
                 .text_signal(c.text.signal_cloned())
                 .child(html!("a", {

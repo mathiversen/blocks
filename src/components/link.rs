@@ -1,12 +1,12 @@
-use std::sync::Arc;
+use std::{pin::Pin, sync::Arc};
 
 use crate::{
     components::icon::Icon,
-    helpers::{url, url_signal_string},
     traits::Component,
+    utils::{url, url_signal_string},
 };
 use dominator::{class, html, Dom};
-use futures_signals::signal::Mutable;
+use futures_signals::signal::{Mutable, Signal, SignalExt};
 use once_cell::sync::Lazy;
 use web_sys::Url;
 
@@ -15,6 +15,7 @@ pub struct Link {
     pub href: Mutable<Url>,
     pub text: Mutable<String>,
     pub icon: Arc<Icon>,
+    pub visible: Mutable<bool>,
 }
 
 impl Default for Link {
@@ -23,11 +24,15 @@ impl Default for Link {
             href: Mutable::new(url("/")),
             text: Mutable::new("Text".into()),
             icon: Arc::new(Icon::new("box")),
+            visible: Mutable::new(true),
         }
     }
 }
 
 impl Component for Link {
+    fn is_visible(&self) -> Pin<Box<dyn Signal<Item = bool>>> {
+        self.visible.signal().boxed()
+    }
     fn render(c: Arc<Self>) -> Dom {
         static A_STYLES: Lazy<String> = Lazy::new(|| {
             class! {
@@ -39,6 +44,7 @@ impl Component for Link {
         });
 
         html!("a", {
+            .visible_signal(c.is_visible())
             .class(&*A_STYLES)
             .attr_signal("href", url_signal_string(c.href.clone()))
             .child(Icon::render(c.icon.clone()))
