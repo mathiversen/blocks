@@ -1,18 +1,15 @@
-use std::{pin::Pin, sync::Arc};
-
 use crate::{
     traits::Component,
-    utils::{serialize_url, url, url_signal_string_svg},
+    utils::{url, url_signal_string_svg, Url},
 };
 use dominator::{class, svg, Dom};
 use futures_signals::signal::{Mutable, Signal, SignalExt};
 use once_cell::sync::Lazy;
-use serde::Serialize;
-use web_sys::Url;
+use serde::{Deserialize, Serialize};
+use std::{pin::Pin, sync::Arc};
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Icon {
-    #[serde(serialize_with = "serialize_url")]
     pub href: Mutable<Url>,
     pub visible: Mutable<bool>,
 }

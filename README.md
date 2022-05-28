@@ -14,4 +14,4 @@ trunk serve -i target/
 
 ## TODO
 
-- [ ] Implement deserialize for `web_sys::Url`
+- [x] Implement deserialize for `web_sys::Url`

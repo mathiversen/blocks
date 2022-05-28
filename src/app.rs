@@ -6,15 +6,15 @@ use crate::{
         link::{Link, LinkArgs},
     },
     traits::Component,
+    utils::url,
 };
 use dominator::{class, html, Dom};
 use futures_signals::signal::{Mutable, SignalExt};
 use once_cell::sync::Lazy;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::sync::Arc;
-use web_sys::Url;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct App {
     pub banner: Arc<Banner>,
     pub header: Arc<Header>,
@@ -29,7 +29,7 @@ impl App {
                 header: Arc::new(Header::new(HeaderArgs {
                     title: ("h1".into(), "Page title".into()),
                     links: vec![Link::new(LinkArgs {
-                        href: Url::new("http://localhost:1337/").unwrap(),
+                        href: url("/"),
                         text: "Home".into(),
                         icon: Some(Arc::new(Icon::new("box".into()))),
                     })],

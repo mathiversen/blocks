@@ -8,7 +8,7 @@ use futures_signals::{
     signal_vec::{MutableVec, SignalVecExt},
 };
 use once_cell::sync::Lazy;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::{pin::Pin, sync::Arc};
 
 #[derive(Debug)]
@@ -17,7 +17,7 @@ pub struct HeaderArgs {
     pub links: Vec<Link>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Header {
     pub title: Arc<Text>,
     pub links: MutableVec<Arc<Link>>,

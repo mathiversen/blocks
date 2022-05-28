@@ -1,13 +1,12 @@
 use dominator::{class, clone, events, html, Dom};
 use futures_signals::signal::{Mutable, SignalExt};
 use once_cell::sync::Lazy;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::sync::Arc;
-use web_sys::Url;
 
 use crate::{
     traits::{Component, SignalReturn},
-    utils::{serialize_url, url_signal_string},
+    utils::{url, url_signal_string, Url},
 };
 
 use super::icon::Icon;
@@ -18,10 +17,9 @@ pub struct BannerArgs {
     pub href: Url,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Banner {
     pub text: Mutable<String>,
-    #[serde(serialize_with = "serialize_url")]
     pub href: Mutable<Url>,
     pub close_icon: Arc<Icon>,
     pub visible: Mutable<bool>,
@@ -31,7 +29,7 @@ impl Default for Banner {
     fn default() -> Self {
         Self {
             text: Mutable::new("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ".into()),
-            href: Mutable::new(Url::new("localhost:1337/").expect("Valid url")),
+            href: Mutable::new(url("/")),
             close_icon: Arc::new(Icon::new("x-square".into())),
             visible: Mutable::new(true)
         }

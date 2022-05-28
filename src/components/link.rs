@@ -3,13 +3,12 @@ use std::{pin::Pin, sync::Arc};
 use crate::{
     components::icon::Icon,
     traits::Component,
-    utils::{serialize_url, url, url_signal_string},
+    utils::{url, url_signal_string, Url},
 };
 use dominator::{class, html, Dom};
 use futures_signals::signal::{Mutable, Signal, SignalExt};
 use once_cell::sync::Lazy;
-use serde::Serialize;
-use web_sys::Url;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug)]
 pub struct LinkArgs {
@@ -18,9 +17,8 @@ pub struct LinkArgs {
     pub icon: Option<Arc<Icon>>,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Link {
-    #[serde(serialize_with = "serialize_url")]
     pub href: Mutable<Url>,
     pub text: Mutable<String>,
     pub icon: Option<Arc<Icon>>,
