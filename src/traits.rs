@@ -1,5 +1,6 @@
 use dominator::Dom;
 use futures_signals::signal::Signal;
+use serde::Serialize;
 use std::fmt::Debug;
 use std::{pin::Pin, sync::Arc};
 
@@ -9,7 +10,7 @@ pub type SignalReturn<A> = Pin<Box<dyn Signal<Item = A>>>;
 
 pub trait Component
 where
-    Self: Sized + Debug + Default,
+    Self: Sized + Debug + Default + Serialize,
 {
     type Argument;
 
@@ -17,8 +18,8 @@ where
     fn new(args: Self::Argument) -> Self;
 
     /// Get the name of the component
-    fn name(&self) -> &str {
-        &get_struct_name::<Self>()
+    fn name(&self) -> String {
+        get_struct_name::<Self>()
     }
 
     /// Transform component into html element with callbacks

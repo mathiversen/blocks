@@ -1,4 +1,5 @@
 use futures_signals::signal::{Mutable, Signal, SignalExt};
+use serde::Serializer;
 use web_sys::Url;
 
 pub fn url(href: &str) -> Url {
@@ -28,4 +29,12 @@ pub fn to_snake_case(text: &str) -> String {
 pub fn get_struct_name<A>() -> String {
     let last = std::any::type_name::<A>().split("::").last().unwrap();
     to_snake_case(last)
+}
+
+pub fn serialize_url<S>(url: &Mutable<Url>, s: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    let url: String = url.read_only().get_cloned().to_string().into();
+    s.serialize_str(&url)
 }

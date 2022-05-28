@@ -1,5 +1,5 @@
 use crate::{
-    components::{link::Link, title::Title},
+    components::{link::Link, text::Text},
     traits::Component,
 };
 use dominator::{class, html, Dom};
@@ -8,17 +8,18 @@ use futures_signals::{
     signal_vec::{MutableVec, SignalVecExt},
 };
 use once_cell::sync::Lazy;
+use serde::Serialize;
 use std::{pin::Pin, sync::Arc};
 
 #[derive(Debug)]
 pub struct HeaderArgs {
-    title: String,
-    links: Vec<Link>,
+    pub title: (String, String),
+    pub links: Vec<Link>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Header {
-    pub title: Arc<Title>,
+    pub title: Arc<Text>,
     pub links: MutableVec<Arc<Link>>,
     pub visible: Mutable<bool>,
 }
@@ -26,7 +27,7 @@ pub struct Header {
 impl Default for Header {
     fn default() -> Self {
         Self {
-            title: Arc::new(Title::default()),
+            title: Arc::new(Text::default()),
             links: MutableVec::new_with_values(
                 (0..5)
                     .map(|_| Arc::new(Link::default()))
@@ -41,11 +42,14 @@ impl Component for Header {
     type Argument = HeaderArgs;
     fn new(args: Self::Argument) -> Self {
         Self {
-            title: Mutable::new(args.title),
+            title: Arc::new(Text::new(args.title)),
             links: MutableVec::new_with_values(
-                args.links.iter().map(|l| Arc::new(l)).collect::<Vec<_>>(),
+                args.links
+                    .into_iter()
+                    .map(|l| Arc::new(l))
+                    .collect::<Vec<_>>(),
             ),
-            visible: (),
+            ..Default::default()
         }
     }
     fn is_visible(&self) -> Pin<Box<dyn Signal<Item = bool>>> {
@@ -76,7 +80,7 @@ impl Component for Header {
 
         html!("header", {
             .class(&*HEADER_STYLES)
-            .child(Title::render(c.title.clone()))
+            .child(Text::render(c.title.clone()))
             .child(html!("ol", {
                 .class(&*LINK_STYLES)
                 .children_signal_vec(c.links.signal_vec_cloned().map(|link| {

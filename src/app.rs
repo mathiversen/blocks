@@ -1,13 +1,20 @@
 use crate::{
-    components::{banner::Banner, header::Header},
+    components::{
+        banner::Banner,
+        header::{Header, HeaderArgs},
+        icon::Icon,
+        link::{Link, LinkArgs},
+    },
     traits::Component,
 };
 use dominator::{class, html, Dom};
 use futures_signals::signal::{Mutable, SignalExt};
 use once_cell::sync::Lazy;
+use serde::Serialize;
 use std::sync::Arc;
+use web_sys::Url;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct App {
     pub banner: Arc<Banner>,
     pub header: Arc<Header>,
@@ -19,7 +26,14 @@ impl App {
         Arc::new({
             Self {
                 banner: Arc::new(Banner::default()),
-                header: Arc::new(Header::default()),
+                header: Arc::new(Header::new(HeaderArgs {
+                    title: ("h1".into(), "Page title".into()),
+                    links: vec![Link::new(LinkArgs {
+                        href: Url::new("http://localhost:1337/").unwrap(),
+                        text: "Home".into(),
+                        icon: Some(Icon::new("box".into())),
+                    })],
+                })),
                 footer: Arc::new(Mutable::new(Some("Iversen © 2022".into()))),
             }
         })

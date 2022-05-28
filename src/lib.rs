@@ -13,6 +13,10 @@ pub async fn main() -> Result<(), JsValue> {
 
     let app = App::new();
 
+    let json = serde_json::to_string_pretty(&app).unwrap();
+
+    log!("{}", json);
+
     dominator::append_dom(&dominator::body(), App::render(app));
 
     Ok(())

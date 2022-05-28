@@ -1,12 +1,13 @@
 use dominator::{class, clone, events, html, Dom};
 use futures_signals::signal::{Mutable, SignalExt};
 use once_cell::sync::Lazy;
+use serde::Serialize;
 use std::sync::Arc;
 use web_sys::Url;
 
 use crate::{
     traits::{Component, SignalReturn},
-    utils::url_signal_string,
+    utils::{serialize_url, url_signal_string},
 };
 
 use super::icon::Icon;
@@ -17,9 +18,10 @@ pub struct BannerArgs {
     pub href: Url,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Banner {
     pub text: Mutable<String>,
+    #[serde(serialize_with = "serialize_url")]
     pub href: Mutable<Url>,
     pub close_icon: Arc<Icon>,
     pub visible: Mutable<bool>,
@@ -30,7 +32,7 @@ impl Default for Banner {
         Self {
             text: Mutable::new("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ".into()),
             href: Mutable::new(Url::new("localhost:1337/").expect("Valid url")),
-            close_icon: Arc::new(Icon::new("x")),
+            close_icon: Arc::new(Icon::new("x".into())),
             visible: Mutable::new(true)
         }
     }
@@ -77,7 +79,7 @@ impl Component for Banner {
 
         html!("aside", {
             .class(&*STYLES)
-            .attr("data-name", c.name())
+            .attr("data-name", &c.name())
             .visible_signal(c.is_visible())
             .child(html!("p", {
                 .text_signal(c.text.signal_cloned())
