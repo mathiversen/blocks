@@ -15,7 +15,7 @@ use web_sys::Url;
 pub struct LinkArgs {
     pub href: Url,
     pub text: String,
-    pub icon: Option<Icon>,
+    pub icon: Option<Arc<Icon>>,
 }
 
 #[derive(Debug, Serialize)]
@@ -23,7 +23,7 @@ pub struct Link {
     #[serde(serialize_with = "serialize_url")]
     pub href: Mutable<Url>,
     pub text: Mutable<String>,
-    pub icon: Arc<Option<Icon>>,
+    pub icon: Option<Arc<Icon>>,
     pub visible: Mutable<bool>,
 }
 
@@ -32,7 +32,7 @@ impl Default for Link {
         Self {
             href: Mutable::new(url("/")),
             text: Mutable::new("Text".into()),
-            icon: Arc::new(None),
+            icon: None,
             visible: Mutable::new(true),
         }
     }
@@ -45,7 +45,7 @@ impl Component for Link {
         Self {
             href: Mutable::new(args.href),
             text: Mutable::new(args.text),
-            icon: Arc::new(args.icon),
+            icon: args.icon,
             visible: Mutable::new(true),
         }
     }
@@ -68,9 +68,9 @@ impl Component for Link {
             .visible_signal(c.is_visible())
             .class(&*A_STYLES)
             .attr_signal("href", url_signal_string(c.href.clone()))
-            // .apply_if(c.icon.is_some(), |dom| {
-            //     dom.child(Icon::render(c.icon.clone()))
-            // })
+            .apply_if(c.icon.is_some(), |dom| {
+                dom.child(Icon::render(c.icon.clone().unwrap()))
+            })
             .child(html!("small", {
                 .text_signal(c.text.signal_cloned())
             }))

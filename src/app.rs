@@ -31,7 +31,7 @@ impl App {
                     links: vec![Link::new(LinkArgs {
                         href: Url::new("http://localhost:1337/").unwrap(),
                         text: "Home".into(),
-                        icon: Some(Icon::new("box".into())),
+                        icon: Some(Arc::new(Icon::new("box".into()))),
                     })],
                 })),
                 footer: Arc::new(Mutable::new(Some("Iversen © 2022".into()))),

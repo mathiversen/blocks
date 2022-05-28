@@ -32,7 +32,7 @@ impl Default for Banner {
         Self {
             text: Mutable::new("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ".into()),
             href: Mutable::new(Url::new("localhost:1337/").expect("Valid url")),
-            close_icon: Arc::new(Icon::new("x".into())),
+            close_icon: Arc::new(Icon::new("x-square".into())),
             visible: Mutable::new(true)
         }
     }
