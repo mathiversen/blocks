@@ -1,15 +1,18 @@
 use dominator::{class, clone, events, html, Dom};
-use futures_signals::signal::{Mutable, SignalExt};
+use futures_signals::{
+    map_ref,
+    signal::{Mutable, SignalExt},
+};
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
 use crate::{
-    traits::{Component, SignalReturn},
+    components::icon::Icon,
+    console_err,
+    traits::{Component, Section, SignalReturn},
     utils::{url, url_signal_string, Url},
 };
-
-use super::icon::Icon;
 
 #[derive(Debug)]
 pub struct BannerArgs {
@@ -36,6 +39,8 @@ impl Default for Banner {
     }
 }
 
+impl Section for Banner {}
+
 impl Component for Banner {
     type Argument = BannerArgs;
 
@@ -50,7 +55,6 @@ impl Component for Banner {
     fn is_visible(&self) -> SignalReturn<bool> {
         self.visible.signal().boxed()
     }
-
     fn render(c: Arc<Self>) -> Dom {
         static STYLES: Lazy<String> = Lazy::new(|| {
             class! {
@@ -77,8 +81,37 @@ impl Component for Banner {
 
         html!("aside", {
             .class(&*STYLES)
-            .attr("data-name", &c.name())
+            .attr("data-name", &c.get_component_name())
+            .attr_signal("visible", c.is_visible().map(|x| x.to_string()))
             .visible_signal(c.is_visible())
+            .after_inserted(clone!(c => move |_| {
+                if let Some(banner) = c.load_from_storage() {
+                    // TODO: Persist everything...
+                    {
+                        let mut text = c.visible.lock_mut();
+                        *text = banner.visible.read_only().get_cloned();
+                    }
+                    {
+                        let mut href = c.visible.lock_mut();
+                        *href = banner.visible.read_only().get_cloned();
+                    }
+                    {
+                        let mut visible = c.visible.lock_mut();
+                        *visible = banner.visible.read_only().get_cloned();
+                    }
+                }
+            }))
+            .future(map_ref! {
+                let _ = c.text.signal_cloned(),
+                let _ = c.visible.signal_cloned(),
+                let _ = c.href.signal_cloned() =>
+                ()
+            }.for_each(clone!(c => move |_| {
+                if let Err(e) = c.save_to_storage() {
+                    console_err!("{:?}", e);
+                }
+                async {}
+            })))
             .child(html!("p", {
                 .text_signal(c.text.signal_cloned())
                 .child(html!("a", {

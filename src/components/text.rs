@@ -37,7 +37,6 @@ impl Component for Text {
     fn is_visible(&self) -> crate::traits::SignalReturn<bool> {
         self.visible.signal().boxed()
     }
-
     fn render(c: Arc<Self>) -> Dom {
         static STYLES: Lazy<String> = Lazy::new(|| {
             class! {

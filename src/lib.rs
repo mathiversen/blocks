@@ -1,10 +1,14 @@
 mod app;
 pub mod components;
 pub mod macros;
+pub mod sections;
 pub mod traits;
 pub mod utils;
 
-use crate::{app::App, utils::window};
+use crate::{
+    app::App,
+    utils::dom::{storage, WebStore},
+};
 use wasm_bindgen::prelude::*;
 
 const ADDRESS: &str = "http://localhost:1337";
@@ -14,8 +18,7 @@ const STATE_KEY: &str = "state";
 pub async fn main() -> Result<(), JsValue> {
     console_error_panic_hook::set_once();
 
-    let window = window();
-    let storage = window.local_storage()?.expect("local storage to exist");
+    let storage = storage(WebStore::Local)?;
 
     let app = if let Some(data) = storage.get_item(STATE_KEY)? {
         console_log!("loading state from local storage");

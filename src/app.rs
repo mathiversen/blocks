@@ -1,9 +1,11 @@
 use crate::{
     components::{
-        banner::Banner,
-        header::{Header, HeaderArgs},
         icon::Icon,
         link::{Link, LinkArgs},
+    },
+    sections::{
+        banner::Banner,
+        header::{Header, HeaderArgs},
     },
     traits::Component,
     utils::url,

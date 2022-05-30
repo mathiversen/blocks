@@ -1,6 +1,6 @@
 use crate::{
     components::{link::Link, text::Text},
-    traits::Component,
+    traits::{Component, Section},
 };
 use dominator::{class, html, Dom};
 use futures_signals::{
@@ -38,6 +38,8 @@ impl Default for Header {
     }
 }
 
+impl Section for Header {}
+
 impl Component for Header {
     type Argument = HeaderArgs;
     fn new(args: Self::Argument) -> Self {
@@ -55,6 +57,7 @@ impl Component for Header {
     fn is_visible(&self) -> Pin<Box<dyn Signal<Item = bool>>> {
         self.visible.signal().boxed()
     }
+
     fn render(c: Arc<Self>) -> Dom {
         static HEADER_STYLES: Lazy<String> = Lazy::new(|| {
             class! {

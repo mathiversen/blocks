@@ -1,3 +1,5 @@
+pub mod dom;
+
 use crate::{console_err, ADDRESS};
 use futures_signals::signal::{Mutable, Signal, SignalExt};
 use serde::{
@@ -9,7 +11,7 @@ use std::{
     io::{Error, ErrorKind},
     ops::Deref,
 };
-use web_sys::{self, Document, Url as WebUrl, Window};
+use web_sys::{self, Url as WebUrl};
 
 #[derive(Debug, Clone)]
 pub struct Url(WebUrl);
@@ -102,12 +104,4 @@ pub fn to_snake_case(text: &str) -> String {
 pub fn get_struct_name<A>() -> String {
     let last = std::any::type_name::<A>().split("::").last().unwrap();
     to_snake_case(last)
-}
-
-pub fn window() -> Window {
-    web_sys::window().unwrap()
-}
-
-pub fn document() -> Document {
-    window().document().unwrap()
 }

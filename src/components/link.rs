@@ -51,7 +51,6 @@ impl Component for Link {
     fn is_visible(&self) -> Pin<Box<dyn Signal<Item = bool>>> {
         self.visible.signal().boxed()
     }
-
     fn render(c: Arc<Self>) -> Dom {
         static A_STYLES: Lazy<String> = Lazy::new(|| {
             class! {
