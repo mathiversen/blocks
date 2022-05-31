@@ -10,8 +10,8 @@ use std::sync::Arc;
 use crate::{
     components::icon::Icon,
     console_err,
-    traits::{Component, Section, SignalReturn},
-    utils::{url, url_signal_string, Url},
+    prelude::*,
+    utils::{url_signal_string, Url},
 };
 
 #[derive(Debug)]
@@ -28,17 +28,6 @@ pub struct Banner {
     pub visible: Mutable<bool>,
 }
 
-impl Default for Banner {
-    fn default() -> Self {
-        Self {
-            text: Mutable::new("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ".into()),
-            href: Mutable::new(url("/")),
-            close_icon: Arc::new(Icon::new("x-square".into())),
-            visible: Mutable::new(true)
-        }
-    }
-}
-
 impl Section for Banner {}
 
 impl Component for Banner {
@@ -48,7 +37,8 @@ impl Component for Banner {
         Self {
             text: Mutable::new(args.text),
             href: Mutable::new(args.href),
-            ..Default::default()
+            close_icon: Arc::new(Icon::new("x-square".into())),
+            visible: Mutable::new(true),
         }
     }
 

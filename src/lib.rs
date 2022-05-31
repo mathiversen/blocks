@@ -2,8 +2,21 @@ mod app;
 pub mod components;
 pub mod macros;
 pub mod sections;
-pub mod traits;
-pub mod utils;
+mod traits;
+mod utils;
+
+pub mod prelude {
+    use std::pin::Pin;
+
+    use futures_signals::signal::Signal;
+
+    pub use super::traits::blocks::Component;
+    pub use super::traits::blocks::Section;
+    pub use super::traits::unwrap::UnwrapExt;
+    pub use super::utils::*;
+
+    pub type SignalReturn<A> = Pin<Box<dyn Signal<Item = A>>>;
+}
 
 use crate::app::App;
 use wasm_bindgen::prelude::*;

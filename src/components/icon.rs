@@ -1,5 +1,5 @@
 use crate::{
-    traits::Component,
+    prelude::*,
     utils::{url, url_signal_string_svg, Url},
 };
 use dominator::{class, svg, Dom};

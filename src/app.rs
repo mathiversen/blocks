@@ -3,12 +3,11 @@ use crate::{
         icon::Icon,
         link::{Link, LinkArgs},
     },
+    prelude::*,
     sections::{
-        banner::Banner,
+        banner::{Banner, BannerArgs},
         header::{Header, HeaderArgs},
     },
-    traits::Component,
-    utils::url,
 };
 use dominator::{class, html, Dom};
 use futures_signals::signal::{Mutable, SignalExt};
@@ -27,7 +26,10 @@ impl App {
     pub fn new() -> Arc<Self> {
         Arc::new({
             Self {
-                banner: Arc::new(Banner::default()),
+                banner: Arc::new(Banner::new(BannerArgs {
+                    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.".into(),
+                    href: url("/"),
+                })),
                 header: Arc::new(Header::new(HeaderArgs {
                     title: ("h1".into(), "Page title".into()),
                     links: vec![Link::new(LinkArgs {
@@ -95,7 +97,7 @@ impl App {
                 .visible_signal(app.footer.signal_ref(|x| x.is_some()).dedupe())
                 .style("text-align", "center")
                 .child(html!("small", {
-                    .text_signal(app.footer.signal_ref(|x| x.clone().unwrap()))
+                    .text_signal(app.footer.signal_ref(|x| x.clone().unwrap_ext()))
                 }))
             }))
             // .child(html!("input" => HtmlInputElement, {

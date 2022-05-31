@@ -1,20 +1,16 @@
 use dominator::Dom;
-use futures_signals::signal::Signal;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use std::fmt::Debug;
-use std::{pin::Pin, sync::Arc};
+use std::sync::Arc;
 use wasm_bindgen::{JsError, JsValue};
 
-use crate::utils::dom::local_storage;
-use crate::utils::get_struct_name;
+use crate::prelude::*;
 use crate::{console_err, console_log};
-
-pub type SignalReturn<A> = Pin<Box<dyn Signal<Item = A>>>;
 
 pub trait Component
 where
-    Self: Sized + Debug + Default,
+    Self: Sized + Debug,
 {
     type Argument;
 
@@ -50,16 +46,16 @@ where
             JsError::new(format!("Failed to create json for component: {}", &name).as_str())
         })?;
         console_log!("[ Saved ] {}: {:?}", &name, &data);
-        local_storage().set_item(&self.get_storage_key(), &data)
+        dom::local_storage().set_item(&self.get_storage_key(), &data)
     }
 
     fn get_data(&self) -> Result<Option<Self>, JsValue> {
         let name = self.get_component_name();
-        let data = local_storage().get_item(&self.get_storage_key())?;
+        let data = dom::local_storage().get_item(&self.get_storage_key())?;
 
         if let Some(data) = data {
             console_log!("[ Loaded ] {}: {:?}", &name, &data);
-            let parsed = serde_json::from_str::<Self>(&data).unwrap();
+            let parsed = serde_json::from_str::<Self>(&data).unwrap_ext();
             return Ok(Some(parsed));
         }
 

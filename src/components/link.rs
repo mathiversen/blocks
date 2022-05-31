@@ -2,7 +2,7 @@ use std::{pin::Pin, sync::Arc};
 
 use crate::{
     components::icon::Icon,
-    traits::Component,
+    prelude::*,
     utils::{url, url_signal_string, Url},
 };
 use dominator::{class, html, Dom};
@@ -66,7 +66,7 @@ impl Component for Link {
             .class(&*A_STYLES)
             .attr_signal("href", url_signal_string(c.href.clone()))
             .apply_if(c.icon.is_some(), |dom| {
-                dom.child(Icon::render(c.icon.clone().unwrap()))
+                dom.child(Icon::render(c.icon.clone().unwrap_ext()))
             })
             .child(html!("small", {
                 .text_signal(c.text.signal_cloned())

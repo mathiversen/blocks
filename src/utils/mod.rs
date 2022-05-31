@@ -1,6 +1,6 @@
 pub mod dom;
 
-use crate::{console_err, ADDRESS};
+use crate::{console_err, prelude::*, ADDRESS};
 use futures_signals::signal::{Mutable, Signal, SignalExt};
 use serde::{
     de::{self, Visitor},
@@ -102,6 +102,6 @@ pub fn to_snake_case(text: &str) -> String {
 }
 
 pub fn get_struct_name<A>() -> String {
-    let last = std::any::type_name::<A>().split("::").last().unwrap();
+    let last = std::any::type_name::<A>().split("::").last().unwrap_ext();
     to_snake_case(last)
 }

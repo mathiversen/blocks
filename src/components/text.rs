@@ -4,7 +4,7 @@ use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
-use crate::traits::Component;
+use crate::prelude::*;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Text {
@@ -34,7 +34,7 @@ impl Component for Text {
         }
     }
 
-    fn is_visible(&self) -> crate::traits::SignalReturn<bool> {
+    fn is_visible(&self) -> SignalReturn<bool> {
         self.visible.signal().boxed()
     }
     fn render(c: Arc<Self>) -> Dom {

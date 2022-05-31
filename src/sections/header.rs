@@ -1,6 +1,6 @@
 use crate::{
     components::{link::Link, text::Text},
-    traits::{Component, Section},
+    prelude::*,
 };
 use dominator::{class, html, Dom};
 use futures_signals::{
@@ -24,20 +24,6 @@ pub struct Header {
     pub visible: Mutable<bool>,
 }
 
-impl Default for Header {
-    fn default() -> Self {
-        Self {
-            title: Arc::new(Text::default()),
-            links: MutableVec::new_with_values(
-                (0..5)
-                    .map(|_| Arc::new(Link::default()))
-                    .collect::<Vec<_>>(),
-            ),
-            visible: Mutable::new(true),
-        }
-    }
-}
-
 impl Section for Header {}
 
 impl Component for Header {
@@ -51,7 +37,7 @@ impl Component for Header {
                     .map(|l| Arc::new(l))
                     .collect::<Vec<_>>(),
             ),
-            ..Default::default()
+            visible: Mutable::new(true),
         }
     }
     fn is_visible(&self) -> Pin<Box<dyn Signal<Item = bool>>> {

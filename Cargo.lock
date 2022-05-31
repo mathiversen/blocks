@@ -13,6 +13,7 @@ name = "blocks"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "cfg-if",
  "console_error_panic_hook",
  "dominator",
  "futures-signals",
