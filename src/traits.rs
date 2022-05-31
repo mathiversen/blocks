@@ -6,7 +6,7 @@ use std::fmt::Debug;
 use std::{pin::Pin, sync::Arc};
 use wasm_bindgen::{JsError, JsValue};
 
-use crate::utils::dom::{storage, WebStore};
+use crate::utils::dom::local_storage;
 use crate::utils::get_struct_name;
 use crate::{console_err, console_log};
 
@@ -49,22 +49,17 @@ where
         let data = serde_json::to_string(self).map_err(|_| {
             JsError::new(format!("Failed to create json for component: {}", &name).as_str())
         })?;
-        let storage = storage(WebStore::Local)?;
-        console_log!("Save data: {:?}", &data);
-        storage.set_item(&self.get_storage_key(), &data)
+        console_log!("[ Saved ] {}: {:?}", &name, &data);
+        local_storage().set_item(&self.get_storage_key(), &data)
     }
 
     fn get_data(&self) -> Result<Option<Self>, JsValue> {
         let name = self.get_component_name();
-        let storage = storage(WebStore::Local)?;
-        let data = storage.get_item(&self.get_storage_key())?;
+        let data = local_storage().get_item(&self.get_storage_key())?;
 
         if let Some(data) = data {
-            console_log!("Got data: {:?}", &data);
-            let parsed = serde_json::from_str::<Self>(&data).map_err(|_| {
-                JsError::new(&format!("Failed to parse json for component: {}", &name))
-            })?;
-
+            console_log!("[ Loaded ] {}: {:?}", &name, &data);
+            let parsed = serde_json::from_str::<Self>(&data).unwrap();
             return Ok(Some(parsed));
         }
 
