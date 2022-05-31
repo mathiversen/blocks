@@ -46,7 +46,7 @@ impl App {
             class! {
                 .style("display", "grid")
                 .style("grid-template-rows", "auto auto 1fr auto")
-                .style("height", "100svh")
+                .style("height", "100dvh")
             }
         });
 

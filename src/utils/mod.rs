@@ -13,7 +13,7 @@ use std::{
 };
 use web_sys::{self, Url as WebUrl};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Url(WebUrl);
 
 impl Deref for Url {

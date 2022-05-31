@@ -14,11 +14,6 @@ trunk serve -i target/
 
 ## TODO
 
-- [x] Implement deserialize for `web_sys::Url`
-- [ ] Enter/Leave transitions for components?
-
-### Components
-
-- [ ] Banner
-- [ ] Main header & navigation bar
-- [ ] Hero
+- [ ] Add more compoents
+- [ ] Transitions
+- ...

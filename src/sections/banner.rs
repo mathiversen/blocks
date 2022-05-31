@@ -85,20 +85,11 @@ impl Component for Banner {
             .attr_signal("visible", c.is_visible().map(|x| x.to_string()))
             .visible_signal(c.is_visible())
             .after_inserted(clone!(c => move |_| {
-                if let Some(banner) = c.load_from_storage() {
-                    // TODO: Persist everything...
-                    {
-                        let mut text = c.visible.lock_mut();
-                        *text = banner.visible.read_only().get_cloned();
-                    }
-                    {
-                        let mut href = c.visible.lock_mut();
-                        *href = banner.visible.read_only().get_cloned();
-                    }
-                    {
-                        let mut visible = c.visible.lock_mut();
-                        *visible = banner.visible.read_only().get_cloned();
-                    }
+                if let Some(data) = c.load_from_storage() {
+                    c.text.set_neq(data.text.get_cloned());
+                    c.href.set_neq(data.href.get_cloned());
+                    // c.close_icon.set(data.close_icon.get_cloned());
+                    c.visible.set_neq(data.visible.get());
                 }
             }))
             .future(map_ref! {
