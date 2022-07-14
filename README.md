@@ -1,9 +1,12 @@
 # Dominator components
 
-## Run
+**Work in progress**
+
+## Run example
 
 ```
-trunk serve -i target/
+cd examples/<example-name>
+trunk serve
 ```
 
 ## Resources
@@ -11,9 +14,3 @@ trunk serve -i target/
 - [Dominator](https://docs.rs/dominator)
 - [Trunk](https://trunkrs.dev)
 - [Feather icons](https://feathericons.com/)
-
-## TODO
-
-- [ ] Add more compoents
-- [ ] Transitions
-- ...
