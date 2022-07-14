@@ -1,10 +1,6 @@
 use std::{pin::Pin, sync::Arc};
 
-use crate::{
-    components::icon::Icon,
-    prelude::*,
-    utils::{url, url_signal_string, Url},
-};
+use crate::{components::icon::Icon, prelude::*};
 use dominator::{class, html, Dom};
 use futures_signals::signal::{Mutable, Signal, SignalExt};
 use once_cell::sync::Lazy;
@@ -12,28 +8,17 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug)]
 pub struct LinkArgs {
-    pub href: Url,
+    pub href: String,
     pub text: String,
     pub icon: Option<Arc<Icon>>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Link {
-    pub href: Mutable<Url>,
+    pub href: Mutable<String>,
     pub text: Mutable<String>,
     pub icon: Option<Arc<Icon>>,
     pub visible: Mutable<bool>,
-}
-
-impl Default for Link {
-    fn default() -> Self {
-        Self {
-            href: Mutable::new(url("/")),
-            text: Mutable::new("Text".into()),
-            icon: None,
-            visible: Mutable::new(true),
-        }
-    }
 }
 
 impl Component for Link {
@@ -51,7 +36,11 @@ impl Component for Link {
     fn is_visible(&self) -> Pin<Box<dyn Signal<Item = bool>>> {
         self.visible.signal().boxed()
     }
-    fn render(c: Arc<Self>) -> Dom {
+
+    fn render<F>(c: Arc<Self>, _on_event: F) -> Dom
+    where
+        F: FnMut(Event) + 'static,
+    {
         static A_STYLES: Lazy<String> = Lazy::new(|| {
             class! {
                 .style("display", "grid")
@@ -64,9 +53,9 @@ impl Component for Link {
         html!("a", {
             .visible_signal(c.is_visible())
             .class(&*A_STYLES)
-            .attr_signal("href", url_signal_string(c.href.clone()))
+            .attr_signal("href", c.href.signal_cloned())
             .apply_if(c.icon.is_some(), |dom| {
-                dom.child(Icon::render(c.icon.clone().unwrap_ext()))
+                dom.child(Icon::render(c.icon.clone().unwrap_ext(), move |_event| {}))
             })
             .child(html!("small", {
                 .text_signal(c.text.signal_cloned())

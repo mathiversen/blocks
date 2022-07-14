@@ -7,23 +7,18 @@ use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
-use crate::{
-    components::icon::Icon,
-    console_err,
-    prelude::*,
-    utils::{url_signal_string, Url},
-};
+use crate::{components::icon::Icon, console_err, console_log, prelude::*};
 
 #[derive(Debug)]
 pub struct BannerArgs {
     pub text: String,
-    pub href: Url,
+    pub href: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Banner {
     pub text: Mutable<String>,
-    pub href: Mutable<Url>,
+    pub href: Mutable<String>,
     pub close_icon: Arc<Icon>,
     pub visible: Mutable<bool>,
 }
@@ -45,7 +40,10 @@ impl Component for Banner {
     fn is_visible(&self) -> SignalReturn<bool> {
         self.visible.signal().boxed()
     }
-    fn render(c: Arc<Self>) -> Dom {
+    fn render<F>(c: Arc<Self>, _on_event: F) -> Dom
+    where
+        F: FnMut(Event) + 'static,
+    {
         static STYLES: Lazy<String> = Lazy::new(|| {
             class! {
                 .style("position", "relative")
@@ -78,7 +76,6 @@ impl Component for Banner {
                 if let Some(data) = c.load_from_storage() {
                     c.text.set_neq(data.text.get_cloned());
                     c.href.set_neq(data.href.get_cloned());
-                    // c.close_icon.set(data.close_icon.get_cloned());
                     c.visible.set_neq(data.visible.get());
                 }
             }))
@@ -97,13 +94,15 @@ impl Component for Banner {
                 .text_signal(c.text.signal_cloned())
                 .child(html!("a", {
                     .class(&*A_STYLES)
-                    .attr_signal("href", url_signal_string(c.href.clone()))
+                    .attr_signal("href", c.href.signal_cloned())
                     .text("Learn more.")
                 }))
             }))
             .child(html!("button", {
                 .class(&*BUTTON_STYLES)
-                .child(Icon::render(c.close_icon.clone()))
+                .child(Icon::render(c.close_icon.clone(), |event| {
+                    console_log!("Banner got: {:?}", event)
+                }))
                 .event(clone!(c => move |_: events::Click| {
                     c.visible.set_neq(false)
                 }))

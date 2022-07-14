@@ -1,48 +1,39 @@
-use crate::{
-    prelude::*,
-    utils::{url, url_signal_string_svg, Url},
-};
+use crate::prelude::*;
 use dominator::{class, svg, Dom};
-use futures_signals::signal::{Mutable, Signal, SignalExt};
+use futures_signals::signal::{Mutable, SignalExt};
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
-use std::{pin::Pin, sync::Arc};
+use std::sync::Arc;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Icon {
-    pub href: Mutable<Url>,
+    pub href: Mutable<String>,
     pub visible: Mutable<bool>,
-}
-
-impl Default for Icon {
-    fn default() -> Self {
-        Self {
-            href: Mutable::new(url("/static/svg/icons.svg#box")),
-            visible: Mutable::new(true),
-        }
-    }
 }
 
 impl Component for Icon {
     type Argument = String;
 
-    fn new(args: Self::Argument) -> Self {
+    fn new(name: Self::Argument) -> Self {
         Self {
-            href: Mutable::new(url(&format!("/static/svg/icons.svg#{}", args))),
-            ..Default::default()
+            href: Mutable::new(format!("/static/svg/icons.svg#{}", name)),
+            visible: Mutable::new(true),
         }
     }
 
-    fn is_visible(&self) -> Pin<Box<dyn Signal<Item = bool>>> {
+    fn is_visible(&self) -> SignalReturn<bool> {
         self.visible.signal().boxed()
     }
 
-    fn render(c: Arc<Self>) -> Dom {
+    fn render<F>(c: Arc<Self>, _on_event: F) -> Dom
+    where
+        F: FnMut(Event) + 'static,
+    {
         static STYLES: Lazy<String> = Lazy::new(|| {
             class! {
                 .style("width", "24px")
                 .style("height", "24px")
-                .style("stroke", "var(--color-black)")
+                .style("stroke", "var(--color-black")
                 .style("stroke-width", "2")
                 .style("stroke-linecap", "round")
                 .style("stroke-linejoin", "round")
@@ -55,7 +46,7 @@ impl Component for Icon {
             .visible_signal(c.is_visible())
             .class(&*STYLES)
             .child(svg!("use", {
-                .attr_signal("href", url_signal_string_svg(c.href.clone()))
+                .attr_signal("href", c.href.signal_cloned())
             }))
         })
     }

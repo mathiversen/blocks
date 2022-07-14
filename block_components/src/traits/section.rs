@@ -1,35 +1,8 @@
-use dominator::Dom;
-use serde::de::DeserializeOwned;
-use serde::Serialize;
-use std::fmt::Debug;
-use std::sync::Arc;
+use block_utils::prelude::*;
+use serde::{de::DeserializeOwned, Serialize};
 use wasm_bindgen::{JsError, JsValue};
 
-use crate::prelude::*;
-use crate::{console_err, console_log};
-
-pub trait Component
-where
-    Self: Sized + Debug,
-{
-    type Argument;
-
-    /// Create the component
-    fn new(args: Self::Argument) -> Self;
-
-    /// Get the name of the component
-    fn get_component_name(&self) -> String {
-        get_struct_name::<Self>()
-    }
-
-    /// Transform component into html element with callbacks
-    fn render(c: Arc<Self>) -> Dom;
-
-    /// Helper method to toggle visibility
-    fn is_visible(&self) -> SignalReturn<bool>;
-}
-
-pub trait Section: Component
+pub trait Section: super::Component
 where
     Self: Serialize + DeserializeOwned,
 {
@@ -46,12 +19,12 @@ where
             JsError::new(format!("Failed to create json for component: {}", &name).as_str())
         })?;
         console_log!("[ Saved ] {}: {:?}", &name, &data);
-        dom::local_storage().set_item(&self.get_storage_key(), &data)
+        local_storage().set_item(&self.get_storage_key(), &data)
     }
 
     fn get_data(&self) -> Result<Option<Self>, JsValue> {
         let name = self.get_component_name();
-        let data = dom::local_storage().get_item(&self.get_storage_key())?;
+        let data = local_storage().get_item(&self.get_storage_key())?;
 
         if let Some(data) = data {
             console_log!("[ Loaded ] {}: {:?}", &name, &data);

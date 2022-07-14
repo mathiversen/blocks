@@ -1,5 +1,6 @@
 use crate::{
     components::{link::Link, text::Text},
+    console_log,
     prelude::*,
 };
 use dominator::{class, html, Dom};
@@ -44,7 +45,10 @@ impl Component for Header {
         self.visible.signal().boxed()
     }
 
-    fn render(c: Arc<Self>) -> Dom {
+    fn render<F>(c: Arc<Self>, _on_event: F) -> Dom
+    where
+        F: FnMut(Event) + 'static,
+    {
         static HEADER_STYLES: Lazy<String> = Lazy::new(|| {
             class! {
                 .style("display", "grid")
@@ -69,12 +73,16 @@ impl Component for Header {
 
         html!("header", {
             .class(&*HEADER_STYLES)
-            .child(Text::render(c.title.clone()))
+            .child(Text::render(c.title.clone(), move |event| {
+                console_log!("Header got: {:?}", event)
+            }))
             .child(html!("ol", {
                 .class(&*LINK_STYLES)
                 .children_signal_vec(c.links.signal_vec_cloned().map(|link| {
                     html!("li", {
-                        .child(Link::render(link.clone()))
+                        .child(Link::render(link.clone(), move |event| {
+                            console_log!("Header got: {:?}", event)
+                        }))
                     })
                 }))
             }))

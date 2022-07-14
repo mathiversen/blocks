@@ -1,4 +1,4 @@
-use crate::prelude::*;
+use crate::traits::*;
 use web_sys::{self, Document, Storage, Window};
 
 pub fn window() -> Window {

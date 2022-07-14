@@ -8,13 +8,10 @@ dist = "dist"
 public_url = "/"
 
 [watch]
-watch = ["src/", "static/"]
+watch = ["src/", "static/", "index.html"]
 ignore = []
 
 [serve]
 address = "0.0.0.0"
 port = 1337
 open = true
-
-[clean]
-dist = "dist"
