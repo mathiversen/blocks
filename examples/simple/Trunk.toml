@@ -1,15 +1,9 @@
-# An example Trunk.toml with all possible fields along with their defaults.
-# https://github.com/thedodd/trunk/blob/master/Trunk.toml
-
 [build]
-target = "index.html"
-release = true
 dist = "dist"
 public_url = "/"
 
 [watch]
-watch = ["src/", "static/", "index.html"]
-ignore = []
+watch = ["src/", "index.html"]
 
 [serve]
 address = "0.0.0.0"

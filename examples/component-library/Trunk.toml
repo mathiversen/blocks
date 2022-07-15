@@ -1,0 +1,27 @@
+# An example Trunk.toml with all possible fields along with their defaults.
+# https://github.com/thedodd/trunk/blob/master/Trunk.toml
+
+[build]
+target = "index.html"
+release = true
+dist = "dist"
+public_url = "/"
+
+[watch]
+watch = ["src/", "static/", "index.html"]
+ignore = []
+
+[serve]
+address = "0.0.0.0"
+port = 1337
+open = true
+
+[[hooks]]
+stage = "pre_build"
+command = "echo"
+command_arguments = ["Hello world!"]
+
+[[hooks]]
+stage = "pre_build"
+command = "build.sh"
+command_arguments = []

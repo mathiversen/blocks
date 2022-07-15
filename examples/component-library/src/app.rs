@@ -13,7 +13,7 @@ impl App {
         let url = routing::url().get_cloned();
 
         Arc::new(Self {
-            icon: Arc::new(Icon::new("activity".into())),
+            icon: Arc::new(Icon::new("box".into())),
             url: Mutable::new(url),
         })
     }
